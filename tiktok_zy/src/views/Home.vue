@@ -2,15 +2,16 @@
   <div id="home">
     <!-- 推荐视频 -->
     <van-swipe style="height: 100%;" vertical :show-indicators="false" v-if="status == '推荐'">
-      <van-swipe-item>
+      <van-swipe-item v-for="(item, index) in videoList" :key="index">
         <video
-          height="100%"
           width="100%"
+          height="100%"
           autoplay
+          controls
           loop
           x5-video-player-fullscreen="true"
-          poster="http://bendipin.oss-cn-beijing.aliyuncs.com/images/product-1552117102331.png"
-          src="http://video.jishiyoo.com/f843c93d4f3f4bee844690fe1fdfc750/28e2548c47ce4d0cb310697f0ca4c7a3-14818dd00765a9a86871da6734b1be28-ld.mp4"
+          :poster="item.vurl"
+          :src="item.url"
         ></video>
         <!-- 右侧列表 -->
         <div class="right-list">
@@ -19,7 +20,8 @@
               <van-image round width="70" height="70" src="https://img.yzcdn.cn/vant/cat.jpeg" />
             </li>
             <li>
-              <i @click="test" ref="ii"></i>
+              <i @click="heart" ref="ii"></i>
+              <span>{{item.goods}}</span>
             </li>
             <li>
               <i @click="con"></i>
@@ -54,36 +56,6 @@
             <van-image round width="4rem" height="4rem" src="https://img.yzcdn.cn/vant/cat.jpeg" />
           </van-col>
         </van-row>
-      </van-swipe-item>
-      <van-swipe-item>
-        <video
-          height="100%"
-          autoplay
-          loop
-          x5-video-player-fullscreen="true"
-          poster="http://bendipin.oss-cn-beijing.aliyuncs.com/images/product-1552117102331.png"
-          src="http://video.jishiyoo.com/f843c93d4f3f4bee844690fe1fdfc750/28e2548c47ce4d0cb310697f0ca4c7a3-14818dd00765a9a86871da6734b1be28-ld.mp4"
-        ></video>
-        <!-- 右侧列表 -->
-        <div class="right-list">
-          <ul>
-            <li>
-              <van-image round width="70" height="70" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-            </li>
-            <li>
-              <i @click="test" ref="i"></i>
-            </li>
-            <li>
-              <i></i>
-            </li>
-          </ul>
-        </div>
-        <!-- 简介 -->
-        <div class="info">
-          <a href="javascript:;">
-            <p>@name</p>
-          </a>
-        </div>
       </van-swipe-item>
     </van-swipe>
     <!-- 关注视频 -->
@@ -96,7 +68,7 @@
           loop
           x5-video-player-fullscreen="true"
           poster="http://bendipin.oss-cn-beijing.aliyuncs.com/images/product-1552117102331.png"
-          src="http://video.jishiyoo.com/f843c93d4f3f4bee844690fe1fdfc750/28e2548c47ce4d0cb310697f0ca4c7a3-14818dd00765a9a86871da6734b1be28-ld.mp4"
+          src="https://aweme.snssdk.com/aweme/v1/playwm/?s_vid=93f1b41336a8b7a442dbf1c29c6bbc56684dc2ba821dde54e34668ea2bc5f8387ed4d5b0cb4c94aeda651bc7ecb1429e3ddb12325477a3d86ebf421a3da10a0d&line=0"
         ></video>
         <!-- 右侧列表 -->
         <div class="right-list">
@@ -105,7 +77,7 @@
               <van-image round width="70" height="70" src="https://img.yzcdn.cn/vant/cat.jpeg" />
             </li>
             <li>
-              <i @click="test" ref="ii"></i>
+              <i ref="i"></i>
             </li>
             <li>
               <i @click="con"></i>
@@ -157,7 +129,7 @@
               <van-image round width="70" height="70" src="https://img.yzcdn.cn/vant/cat.jpeg" />
             </li>
             <li>
-              <i @click="test" ref="i"></i>
+              <i ref="i"></i>
             </li>
             <li>
               <i></i>
@@ -196,36 +168,49 @@ export default {
       // 控制评论的弹出与关闭
       show: false,
       // 控制头部推荐和关注的切换
-      status: '推荐'
+      status: '推荐',
+      // 视频信息
+      videoList: []
     }
   },
   methods: {
-    test () {
+    // 点赞
+    heart () {
       this.$refs.ii.className = 'like-active'
     },
+    // 打开评论
     con () {
       this.show = true
       document.querySelector('.navigate').style.display = 'none'
     },
+    // 关闭评论
     close () {
       setTimeout(() => {
         document.querySelector('.navigate').style.display = 'block'
       }, 300)
     },
-    test2 () {
+    getVideoList () {
       this.$Http.get('/index').then(res => {
-        console.log(res)
+        if (res.data.code === 200) {
+          this.videoList = res.data.data
+        }
+        console.log(this.videoList)
       })
     }
   },
   created () {
-    this.test2()
+    this.getVideoList()
   }
 }
 </script>
 
 <style scoped>
 #home {
+  width: 100%;
+  height: 100%;
+}
+.van-swipe {
+  width: 100%;
   height: 100%;
 }
 .right-list {
@@ -237,6 +222,7 @@ export default {
   width: 70px;
   height: 70px;
   margin-bottom: 10%;
+  text-align: center;
 }
 .right-list li:nth-child(2) i {
   display: block;
@@ -245,6 +231,9 @@ export default {
   background-image: url("../../public/web_heart_animation.png");
   background-position: -38px;
   background-size: 4320px 148.5px;
+}
+.right-list li:nth-child(2) span {
+  color: white;
 }
 .like-active {
   animation-timing-function: steps(28);
