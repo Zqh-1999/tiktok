@@ -283,7 +283,7 @@ export default {
   display: block;
   width: 50px;
   height: 50px;
-  background: url("../../public/images/icons8-搜索-60.png") no-repeat;
+  background: url("../../public/images/icons8-60.png") no-repeat;
   background-size: 30px 30px;
 }
 .top span {
