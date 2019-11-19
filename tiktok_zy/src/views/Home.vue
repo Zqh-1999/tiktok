@@ -1,10 +1,11 @@
 <template>
   <div id="home">
-    <!-- 视频 -->
-    <van-swipe style="height: 100%;" vertical :show-indicators="false">
+    <!-- 推荐视频 -->
+    <van-swipe style="height: 100%;" vertical :show-indicators="false" v-if="status == '推荐'">
       <van-swipe-item>
         <video
           height="100%"
+          width="100%"
           autoplay
           loop
           x5-video-player-fullscreen="true"
@@ -23,7 +24,7 @@
             <li>
               <i @click="con"></i>
               <!-- 评论 -->
-              <van-action-sheet v-model="show" title="401 条评论">
+              <van-action-sheet v-model="show" title="401 条评论" @close="close">
                 <van-row>
                   <van-col span="2" offset="1">
                     <van-image
@@ -42,14 +43,14 @@
         </div>
         <!-- 简介 -->
         <van-row class="info">
-          <van-col class="text">
+          <van-col class="text" span="15">
             <a href="javascript:;">
               <p>@名字</p>
             </a>
             <span>太可爱啦哈哈哈哈哈哈嗝</span>
             <van-notice-bar text="名字原创的音乐哈哈哈哈哈嗝" background="none" color="#fff" />
           </van-col>
-          <van-col class="img" offset="7">
+          <van-col class="img" offset="2">
             <van-image round width="4rem" height="4rem" src="https://img.yzcdn.cn/vant/cat.jpeg" />
           </van-col>
         </van-row>
@@ -85,7 +86,92 @@
         </div>
       </van-swipe-item>
     </van-swipe>
-
+    <!-- 关注视频 -->
+    <van-swipe style="height: 100%;" vertical :show-indicators="false" v-if="status == '关注'">
+      <van-swipe-item>
+        <video
+          height="100%"
+          width="100%"
+          autoplay
+          loop
+          x5-video-player-fullscreen="true"
+          poster="http://bendipin.oss-cn-beijing.aliyuncs.com/images/product-1552117102331.png"
+          src="http://video.jishiyoo.com/f843c93d4f3f4bee844690fe1fdfc750/28e2548c47ce4d0cb310697f0ca4c7a3-14818dd00765a9a86871da6734b1be28-ld.mp4"
+        ></video>
+        <!-- 右侧列表 -->
+        <div class="right-list">
+          <ul>
+            <li>
+              <van-image round width="70" height="70" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+            </li>
+            <li>
+              <i @click="test" ref="ii"></i>
+            </li>
+            <li>
+              <i @click="con"></i>
+              <!-- 评论 -->
+              <van-action-sheet v-model="show" title="401 条评论" @close="close">
+                <van-row>
+                  <van-col span="2" offset="1">
+                    <van-image
+                      round
+                      width="3rem"
+                      height="3rem"
+                      src="https://img.yzcdn.cn/vant/cat.jpeg"
+                    />
+                  </van-col>
+                  <van-col span="17" offset="1">评论</van-col>
+                  <van-col span="2" offset="1">赞</van-col>
+                </van-row>
+              </van-action-sheet>
+            </li>
+          </ul>
+        </div>
+        <!-- 简介 -->
+        <van-row class="info">
+          <van-col class="text" span="15">
+            <a href="javascript:;">
+              <p>@名字</p>
+            </a>
+            <span>太可爱啦哈哈哈哈哈哈嗝</span>
+            <van-notice-bar text="名字原创的音乐哈哈哈哈哈嗝" background="none" color="#fff" />
+          </van-col>
+          <van-col class="img" offset="2">
+            <van-image round width="4rem" height="4rem" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+          </van-col>
+        </van-row>
+      </van-swipe-item>
+      <van-swipe-item>
+        <video
+          height="100%"
+          autoplay
+          loop
+          x5-video-player-fullscreen="true"
+          poster="http://bendipin.oss-cn-beijing.aliyuncs.com/images/product-1552117102331.png"
+          src="http://video.jishiyoo.com/f843c93d4f3f4bee844690fe1fdfc750/28e2548c47ce4d0cb310697f0ca4c7a3-14818dd00765a9a86871da6734b1be28-ld.mp4"
+        ></video>
+        <!-- 右侧列表 -->
+        <div class="right-list">
+          <ul>
+            <li>
+              <van-image round width="70" height="70" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+            </li>
+            <li>
+              <i @click="test" ref="i"></i>
+            </li>
+            <li>
+              <i></i>
+            </li>
+          </ul>
+        </div>
+        <!-- 简介 -->
+        <div class="info">
+          <a href="javascript:;">
+            <p>@name</p>
+          </a>
+        </div>
+      </van-swipe-item>
+    </van-swipe>
     <!-- 头部 -->
     <div class="top">
       <van-row>
@@ -93,10 +179,10 @@
           <i></i>
         </van-col>
         <van-col offset="4" style="color:#fff">
-          <span>关注</span>
+          <span @click="status = '关注'">关注</span>
         </van-col>
         <van-col offset="4" style="color:#fff">
-          <span class="active">推荐</span>
+          <span class="active" @click="status = '推荐'">推荐</span>
         </van-col>
       </van-row>
     </div>
@@ -107,7 +193,10 @@
 export default {
   data () {
     return {
-      show: false
+      // 控制评论的弹出与关闭
+      show: false,
+      // 控制头部推荐和关注的切换
+      status: '推荐'
     }
   },
   methods: {
@@ -116,6 +205,12 @@ export default {
     },
     con () {
       this.show = true
+      document.querySelector('.navigate').style.display = 'none'
+    },
+    close () {
+      setTimeout(() => {
+        document.querySelector('.navigate').style.display = 'block'
+      }, 300)
     }
   }
 }
@@ -180,7 +275,8 @@ export default {
   display: block;
   width: 50px;
   height: 50px;
-  background: url("../../public/images/icons8-搜索-30.png") no-repeat;
+  background: url("../../public/images/icons8-搜索-60.png") no-repeat;
+  background-size: 30px 30px;
 }
 .top span {
   font-size: 22px;
