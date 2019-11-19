@@ -211,7 +211,15 @@ export default {
       setTimeout(() => {
         document.querySelector('.navigate').style.display = 'block'
       }, 300)
+    },
+    test2 () {
+      this.$Http.get('/index').then(res => {
+        console.log(res)
+      })
     }
+  },
+  created () {
+    this.test2()
   }
 }
 </script>
