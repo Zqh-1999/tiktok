@@ -1,17 +1,17 @@
 <template>
   <div id="home">
     <!-- 推荐视频 -->
-    <van-swipe style="height: 100%;" vertical :show-indicators="false" v-if="status == '推荐'">
+    <van-swipe style="height: 100%;" vertical :show-indicators="false" @change="onChange">
       <van-swipe-item v-for="(item, index) in videoList" :key="index">
         <video
           width="100%"
           height="100%"
-          autoplay
-          controls
+          :autoplay="index==0 ? true:false"
           loop
           x5-video-player-fullscreen="true"
           :poster="item.vurl"
           :src="item.url"
+          ref="video"
         ></video>
         <!-- 右侧列表 -->
         <div class="right-list">
@@ -20,26 +20,11 @@
               <van-image round width="70" height="70" src="https://img.yzcdn.cn/vant/cat.jpeg" />
             </li>
             <li>
-              <i @click="heart" ref="ii"></i>
+              <i @click="heart(index)" ref="ii"></i>
               <span>{{item.goods}}</span>
             </li>
             <li>
               <i @click="con"></i>
-              <!-- 评论 -->
-              <van-action-sheet v-model="show" title="401 条评论" @close="close">
-                <van-row>
-                  <van-col span="2" offset="1">
-                    <van-image
-                      round
-                      width="3rem"
-                      height="3rem"
-                      src="https://img.yzcdn.cn/vant/cat.jpeg"
-                    />
-                  </van-col>
-                  <van-col span="17" offset="1">评论</van-col>
-                  <van-col span="2" offset="1">赞</van-col>
-                </van-row>
-              </van-action-sheet>
             </li>
           </ul>
         </div>
@@ -56,92 +41,6 @@
             <van-image round width="4rem" height="4rem" src="https://img.yzcdn.cn/vant/cat.jpeg" />
           </van-col>
         </van-row>
-      </van-swipe-item>
-    </van-swipe>
-    <!-- 关注视频 -->
-    <van-swipe style="height: 100%;" vertical :show-indicators="false" v-if="status == '关注'">
-      <van-swipe-item>
-        <video
-          height="100%"
-          width="100%"
-          autoplay
-          loop
-          x5-video-player-fullscreen="true"
-          poster="http://bendipin.oss-cn-beijing.aliyuncs.com/images/product-1552117102331.png"
-          src="https://aweme.snssdk.com/aweme/v1/playwm/?s_vid=93f1b41336a8b7a442dbf1c29c6bbc56684dc2ba821dde54e34668ea2bc5f8387ed4d5b0cb4c94aeda651bc7ecb1429e3ddb12325477a3d86ebf421a3da10a0d&line=0"
-        ></video>
-        <!-- 右侧列表 -->
-        <div class="right-list">
-          <ul>
-            <li>
-              <van-image round width="70" height="70" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-            </li>
-            <li>
-              <i ref="i"></i>
-            </li>
-            <li>
-              <i @click="con"></i>
-              <!-- 评论 -->
-              <van-action-sheet v-model="show" title="401 条评论" @close="close">
-                <van-row>
-                  <van-col span="2" offset="1">
-                    <van-image
-                      round
-                      width="3rem"
-                      height="3rem"
-                      src="https://img.yzcdn.cn/vant/cat.jpeg"
-                    />
-                  </van-col>
-                  <van-col span="17" offset="1">评论</van-col>
-                  <van-col span="2" offset="1">赞</van-col>
-                </van-row>
-              </van-action-sheet>
-            </li>
-          </ul>
-        </div>
-        <!-- 简介 -->
-        <van-row class="info">
-          <van-col class="text" span="15">
-            <a href="javascript:;">
-              <p>@名字</p>
-            </a>
-            <span>太可爱啦哈哈哈哈哈哈嗝</span>
-            <van-notice-bar text="名字原创的音乐哈哈哈哈哈嗝" background="none" color="#fff" />
-          </van-col>
-          <van-col class="img" offset="2">
-            <van-image round width="4rem" height="4rem" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-          </van-col>
-        </van-row>
-      </van-swipe-item>
-      <van-swipe-item>
-        <video
-          height="100%"
-          autoplay
-          loop
-          x5-video-player-fullscreen="true"
-          poster="http://bendipin.oss-cn-beijing.aliyuncs.com/images/product-1552117102331.png"
-          src="http://video.jishiyoo.com/f843c93d4f3f4bee844690fe1fdfc750/28e2548c47ce4d0cb310697f0ca4c7a3-14818dd00765a9a86871da6734b1be28-ld.mp4"
-        ></video>
-        <!-- 右侧列表 -->
-        <div class="right-list">
-          <ul>
-            <li>
-              <van-image round width="70" height="70" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-            </li>
-            <li>
-              <i ref="i"></i>
-            </li>
-            <li>
-              <i></i>
-            </li>
-          </ul>
-        </div>
-        <!-- 简介 -->
-        <div class="info">
-          <a href="javascript:;">
-            <p>@name</p>
-          </a>
-        </div>
       </van-swipe-item>
     </van-swipe>
     <!-- 头部 -->
@@ -158,6 +57,16 @@
         </van-col>
       </van-row>
     </div>
+    <!-- 评论 -->
+    <van-action-sheet v-model="show" title="401 条评论" @close="close">
+      <van-row>
+        <van-col span="2" offset="1">
+          <van-image round width="3rem" height="3rem" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+        </van-col>
+        <van-col span="17" offset="1">评论</van-col>
+        <van-col span="2" offset="1">赞</van-col>
+      </van-row>
+    </van-action-sheet>
   </div>
 </template>
 
@@ -175,8 +84,14 @@ export default {
   },
   methods: {
     // 点赞
-    heart () {
-      this.$refs.ii.className = 'like-active'
+    heart (index) {
+      if (this.$refs.ii[index].className === 'like-active') {
+        this.$refs.ii[index].className = ''
+        this.videoList[index].goods--
+      } else {
+        this.$refs.ii[index].className = 'like-active'
+        this.videoList[index].goods++
+      }
     },
     // 打开评论
     con () {
@@ -189,13 +104,22 @@ export default {
         document.querySelector('.navigate').style.display = 'block'
       }, 300)
     },
+    // 获取视频
     getVideoList () {
       this.$Http.get('/index').then(res => {
         if (res.data.code === 200) {
           this.videoList = res.data.data
         }
-        console.log(this.videoList)
       })
+    },
+    // 切换视频
+    onChange (index) {
+      let qq = document.querySelectorAll('video')
+      qq.forEach(element => {
+        element.pause()
+        element.currentTime = 0
+      })
+      qq[index].play()
     }
   },
   created () {
