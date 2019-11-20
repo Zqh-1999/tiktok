@@ -107,3 +107,14 @@ module.exports.comment = (req, res) => {
     })
   })
 }
+
+
+// 添加父评论
+module.exports.comadd=(req,res)=>{
+mysql.query("INSERT INTO comment")
+}
+
+// 添加子评论
+module.exports.comaddson=(req,res)=>{
+
+}

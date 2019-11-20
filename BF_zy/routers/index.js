@@ -22,9 +22,10 @@ router.get("/user/:id(\\d+)",controller.user)
 // 查询评论
 router.get("/comment/show/:id(\\d+)",controller.comment)
 
-// 添加评论
-
-
+// 添加父评论
+router.post("/comment/add",controller.comadd)
+// 添加子评论
+router.post("/comment/add/son",controller.comaddson)
 
 // 评论点赞
 
