@@ -96,7 +96,7 @@ module.exports.comment = (req, res) => {
         for (let j = 0; j < result2.length; j++) {
           if (result2[j].gen_id == result1[i].id) {
             result1[i].arr.push(result2[j])
-            console.log(result1)
+            // console.log(result1)
           }
         }
       }
