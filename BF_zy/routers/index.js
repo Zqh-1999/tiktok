@@ -27,7 +27,15 @@ router.post("/comment/add",controller.comadd)
 // 添加子评论
 router.post("/comment/add/son",controller.comaddson)
 
+// 视频点赞
+
+
+
 // 评论点赞
+
+
+
+// 用户关注
 
 
 
