@@ -18,4 +18,18 @@ router.get("/videos/:id(\\d+)",controller.video)
 // 根据用户id查询用户信息
 router.get("/user/:id(\\d+)",controller.user)
 
+// 评论
+// 查询评论
+router.get("/")
+
+// 添加评论
+
+
+
+// 评论点赞
+
+
+
+
+
 module.exports = router
