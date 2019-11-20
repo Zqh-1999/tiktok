@@ -28,27 +28,27 @@ module.exports.videos = (req, res) => {
   console.log(user_id);
   console.log(vtext)
   if (city) {
-    mysql.query("SELECT * FROM video WHERE city = ?",city,(error,result)=>{
-      if(error) return console.log(error);
+    mysql.query("SELECT * FROM video WHERE city = ?", city, (error, result) => {
+      if (error) return console.log(error);
       res.json({
-        ok:1,
-        data:result[0]
+        ok: 1,
+        data: result[0]
       })
     })
-  }else if(user_id){
-    mysql.query("SELECT * FROM video WHERE user_id = ?",user_id,(error,result)=>{
-      if(error) return console.log(error);
+  } else if (user_id) {
+    mysql.query("SELECT * FROM video WHERE user_id = ?", user_id, (error, result) => {
+      if (error) return console.log(error);
       res.json({
-        ok:2,
-        data:result[0]
+        ok: 2,
+        data: result[0]
       })
     })
-  }else if(vtext){
-    mysql.query(`SELECT * FROM video WHERE vtext LIKE '%${vtext}%'`,(error,result)=>{
-      if(error) return console.log(error);
+  } else if (vtext) {
+    mysql.query(`SELECT * FROM video WHERE vtext LIKE '%${vtext}%'`, (error, result) => {
+      if (error) return console.log(error);
       res.json({
-        ok:3,
-        data:result
+        ok: 3,
+        data: result
       })
     })
   }
@@ -72,7 +72,7 @@ module.exports.video = (req, res) => {
 
 
 // 根据用户id查询用户信息
-module.exports.user=(req,res)=>{
+module.exports.user = (req, res) => {
   let id = req.params.id
   mysql.query("SELECT * FROM user WHERE id = ?", id, (error, result) => {
     if (error) return console.log(error);
@@ -84,4 +84,26 @@ module.exports.user=(req,res)=>{
   })
 }
 
-// 
+// 根据视频id查询视频评论
+module.exports.comment = (req, res) => {
+  let id = req.params.id
+  mysql.query("SELECT * FROM comment where v_id = ?", id, (error, result1) => {
+    if (error) return console.log(error)
+    mysql.query("SELECT * FROM com_son", (error1, result2) => {
+      if (error1) return console.log(error1)
+      for (let i = 0; i < result1.length; i++) {
+        result1[i].arr = []
+        for (let j = 0; j < result2.length; j++) {
+          if (result2[j].gen_id == result1[i].id) {
+            result1[i].arr.push(result2[j])
+            console.log(result1)
+          }
+        }
+      }
+      res.json({
+        ok: 1,
+        data: result1
+      })
+    })
+  })
+}

@@ -20,7 +20,7 @@ router.get("/user/:id(\\d+)",controller.user)
 
 // 评论
 // 查询评论
-router.get("/")
+router.get("/comment/show/:id(\\d+)",controller.comment)
 
 // 添加评论
 
