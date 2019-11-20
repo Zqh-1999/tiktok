@@ -86,23 +86,25 @@ module.exports.user = (req, res) => {
 
 // 根据视频id查询视频评论
 module.exports.comment = (req, res) => {
+  let num=0
   let id = req.params.id
   mysql.query("SELECT * FROM comment where v_id = ?", id, (error, result1) => {
     if (error) return console.log(error)
     mysql.query("SELECT * FROM com_son", (error1, result2) => {
+      num=result2.length+result1.length
       if (error1) return console.log(error1)
       for (let i = 0; i < result1.length; i++) {
         result1[i].arr = []
         for (let j = 0; j < result2.length; j++) {
           if (result2[j].gen_id == result1[i].id) {
             result1[i].arr.push(result2[j])
-            // console.log(result1)
           }
         }
       }
       res.json({
         ok: 1,
-        data: result1
+        data: result1,
+        num:num
       })
     })
   })
@@ -110,11 +112,23 @@ module.exports.comment = (req, res) => {
 
 
 // 添加父评论
-module.exports.comadd=(req,res)=>{
-mysql.query("INSERT INTO comment")
+module.exports.comadd = (req, res) => {
+  let params = req.body
+  mysql.query("INSERT INTO comment SET ?",params,(err,result)=>{
+    if(err)return console.log(err);
+    res.json({
+      ok:1
+    })
+  })
 }
 
 // 添加子评论
-module.exports.comaddson=(req,res)=>{
-
+module.exports.comaddson = (req, res) => {
+  let params = req.body
+  mysql.query("INSERT INTO com_son SET ?",params,(err,result)=>{
+    if(err)return console.log(err);
+    res.json({
+      ok:1
+    })
+  })
 }
