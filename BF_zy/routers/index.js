@@ -14,4 +14,8 @@ router.get("/videos",controller.videos)
 // 根据id查询视频
 router.get("/videos/:id(\\d+)",controller.video)
 
+// 用户
+// 根据用户id查询用户信息
+router.get("/user/:id(\\d+)",controller.user)
+
 module.exports = router

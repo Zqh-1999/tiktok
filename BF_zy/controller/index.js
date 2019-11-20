@@ -69,3 +69,17 @@ module.exports.video = (req, res) => {
     })
   })
 }
+
+
+// 根据用户id查询用户信息
+module.exports.user=(req,res)=>{
+  let id = req.params.id
+  mysql.query("SELECT * FROM user WHERE id = ?", id, (error, result) => {
+    if (error) return console.log(error);
+    console.log(result)
+    res.json({
+      ok: 1,
+      data: result[0]
+    })
+  })
+}
