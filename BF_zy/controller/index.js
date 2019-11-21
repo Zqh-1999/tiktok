@@ -119,7 +119,7 @@ module.exports.users = (req, res) => {
   // let id = [1,2,3,4]
   mysql.query(`SELECT * FROM user WHERE id in (${id})`, (error, result) => {
     if (error) {
-      res.json({
+      return res.json({
         ok: 0,
         err: error
       })
@@ -273,6 +273,7 @@ module.exports.praise = (req, res) => {
             err: err1
           })
         } else {
+          // 查询用户的
           mysql.query("select love from user where id = ?", user_id, (err2, ret2) => {
             if (err2) {
               res.json({
@@ -314,6 +315,28 @@ module.exports.praise = (req, res) => {
 
 
 // 用户关注
-module.exports.follow=(req,res)=>{
-  
+module.exports.follow = (req, res) => {
+  let id = req.body.id;
+  let att_id = req.body.att_id
+  mysql.query("select attention from user where id = ?", id, (error, result) => {
+    if (error) {
+      res.json({
+        ok: 0,
+        error: error
+      })
+    }
+
+    let str = result[0].attention
+    let arr = str.split(",")
+
+    function unique(arr) {
+      return Array.from(new Set(arr))
+    }
+    arr.push(att_id);
+    str = unique(arr).join(",")
+    console.log(str)
+    mysql.query(`update user set attention = ? where id = ${id}`, str, (error1, result1) => {
+
+    })
+  })
 }

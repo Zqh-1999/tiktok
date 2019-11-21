@@ -32,11 +32,7 @@ router.post("/comment/add/son",controller.comaddson)
 // 视频点赞
 router.put("/praise",controller.praise)
 
-
 // 用户关注
 router.put("/follow",controller.follow)
-
-
-
 
 module.exports = router
