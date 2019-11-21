@@ -233,16 +233,14 @@ module.exports.praise = (req, res) => {
           })
         }
       })
-      mysql.query("select love from user where user_id = ?",user_id,(err2,ret2)=>{
-        if(err2){
+      mysql.query("select love from user where user_id = ?", user_id, (err2, ret2) => {
+        if (err2) {
           res.json({
-            ok:0,
-            err:err2
+            ok: 0,
+            err: err2
           })
         }
-        res.json({
-          data:ret2
-        })
+        console.log(ret2)
       })
     })
   } else if (zan == "false") {
