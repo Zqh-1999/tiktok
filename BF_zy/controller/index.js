@@ -99,7 +99,7 @@ module.exports.video = (req, res) => {
 // 根据用户id查询用户信息
 module.exports.user = (req, res) => {
   let id = req.params.id
-  mysql.query("SELECT * FROM user WHERE id in ?", id, (error, result) => {
+  mysql.query("SELECT * FROM user WHERE id = ?", id, (error, result) => {
     if (error) {
       res.json({
         ok: 0,
@@ -237,9 +237,12 @@ module.exports.praise = (req, res) => {
         if(err2){
           res.json({
             ok:0,
-            err
+            err:err2
           })
         }
+        res.json({
+          data:ret2
+        })
       })
     })
   } else if (zan == "false") {
