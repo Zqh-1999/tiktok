@@ -314,3 +314,6 @@ module.exports.praise = (req, res) => {
 
 
 // 用户关注
+module.exports.follow=(req,res)=>{
+  
+}

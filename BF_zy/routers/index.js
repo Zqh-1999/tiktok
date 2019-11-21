@@ -33,12 +33,8 @@ router.post("/comment/add/son",controller.comaddson)
 router.put("/praise",controller.praise)
 
 
-// 评论点赞
-
-
-
 // 用户关注
-
+router.put("/follow",controller.follow)
 
 
 
