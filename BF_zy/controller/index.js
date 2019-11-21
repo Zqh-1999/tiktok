@@ -134,14 +134,14 @@ module.exports.user = (req, res) => {
 module.exports.users = (req, res) => {
   let id = req.query.id
   // let id = [1,2,3,4]
-  mysql.query(`SELECT * FROM user WHERE id in (${id})`, (error, result) => {
+  mysql.query(`SELECT * FROM user WHERE id in (${id}) `, (error, result) => {
     if (error) {
       return res.json({
         ok: 0,
         err: error
       })
     }
-    // console.log(result)
+    console.log(result)
     res.json({
       ok: 1,
       data: result
