@@ -10,7 +10,7 @@ Vue.use(Vant)
 
 Vue.prototype.$Http = Axios
 
-Axios.defaults.baseURL = 'http://127.0.0.1'
+Axios.defaults.baseURL = 'http://47.56.172.241:8181'
 
 Vue.config.productionTip = false
 

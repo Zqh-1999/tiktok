@@ -35,7 +35,11 @@
               <p>@ {{userList.username}}</p>
             </a>
             <span>{{item.vtext}}</span>
-            <van-notice-bar :text="item.vmusic+' '+item.vmusic+' '+item.vmusic" background="none" color="#fff" />
+            <van-notice-bar
+              :text="item.vmusic+' '+item.vmusic+' '+item.vmusic"
+              background="none"
+              color="#fff"
+            />
           </van-col>
           <van-col class="img" offset="6">
             <van-image round width="4rem" height="4rem" :src="userList.photo" />
@@ -59,16 +63,46 @@
     </div>
     <!-- 评论 -->
     <van-action-sheet v-model="show" :title="conTotal+' 条评论'" @close="close">
-      <van-row v-for="(item, index) in conList" :key="index" style="padding:5px 0px">
-        <van-col span="2" offset="1">
-          <van-image round width="2.5rem" height="2.5rem" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-        </van-col>
-        <van-col span="15" offset="3">
-          <div style="color:#a4a9aa">{{item.u_id}}</div>
-          <span>{{item.comment}}</span>
-        </van-col>
-        <van-col span="2" offset="1">赞</van-col>
-      </van-row>
+      <van-collapse v-model="activeNames">
+        <van-row v-for="(item, index) in conList" :key="index" style="padding:5px 0px">
+          <van-col span="2" offset="1">
+            <van-image
+              round
+              width="2.5rem"
+              height="2.5rem"
+              src="https://img.yzcdn.cn/vant/cat.jpeg"
+            />
+          </van-col>
+          <van-col span="15" offset="3">
+            <div style="color:#a4a9aa" v-if="fuser.length != 0">{{fuser[index].username}}</div>
+            <span>{{item.comment}}</span>
+          </van-col>
+          <van-collapse-item
+            v-if="item.arr.length > 0"
+            style="text-align: center; color:#9fa4a5"
+            :title="'展开'+ item.arr.length + '条回复'"
+            :name="index"
+          >
+            <van-row v-for="(item1, index1) in item.arr" :key="index1" style="padding:5px 0px">
+              <van-col span="2" offset="2">
+                <van-image
+                  round
+                  width="2rem"
+                  height="2rem"
+                  src="https://img.yzcdn.cn/vant/cat.jpeg"
+                />
+              </van-col>
+              <van-col span="15" offset="3" style="color:#5f5f60;text-align: left">
+                <div style="color:#a4a9aa" v-if="suser.length != 0">{{suser[index1].username}}</div>
+                <span>{{item1.comments_son}}</span>
+              </van-col>
+            </van-row>
+          </van-collapse-item>
+        </van-row>
+      </van-collapse>
+      <van-cell-group>
+        <van-field v-model="value" placeholder="留下你的精彩评论吧" />
+      </van-cell-group>
     </van-action-sheet>
   </div>
 </template>
@@ -88,7 +122,14 @@ export default {
       // 评论列表
       conList: [],
       // 总评论
-      conTotal: 0
+      conTotal: 0,
+      activeNames: [],
+      // 父评论用户
+      fuser: [],
+      // 子评论用户
+      suser: [],
+      // 评论输入内容
+      value: ''
     }
   },
   methods: {
@@ -107,9 +148,26 @@ export default {
       this.show = true
       document.querySelector('.navigate').style.display = 'none'
       this.$Http.get(`/comment/show/${id}`).then(res => {
-        console.log(res.data.data)
-        this.conList = res.data.data
-        this.conTotal = res.data.num
+        if (res.data.ok === 1) {
+          this.conList = res.data.data
+          this.conTotal = res.data.num
+          let fid = []
+          this.conList.forEach(element => {
+            fid.push(element.u_id)
+          })
+          let sid = []
+          this.conList.forEach(element => {
+            element.arr.forEach(element => {
+              sid.push(element.u_id)
+            })
+          })
+          this.$Http.get(`/users`, { params: { id: fid } }).then(res => {
+            this.fuser = res.data.data
+          })
+          this.$Http.get(`/users`, { params: { id: sid } }).then(res => {
+            this.suser = res.data.data
+          })
+        }
       })
     },
     // 关闭评论
@@ -117,6 +175,7 @@ export default {
       setTimeout(() => {
         document.querySelector('.navigate').style.display = 'block'
       }, 300)
+      this.activeNames = []
     },
     // 获取视频
     getVideoList () {
@@ -127,7 +186,7 @@ export default {
             this.userList = res1.data.data
           })
         } else {
-          // this.$
+          this.$toast.fail('加载失败')
         }
       })
     },
