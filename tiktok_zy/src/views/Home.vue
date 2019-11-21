@@ -17,28 +17,28 @@
         <div class="right-list">
           <ul>
             <li>
-              <van-image round width="70" height="70" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+              <van-image round width="70" height="70" :src="userList.photo" />
             </li>
             <li>
               <i @click="heart(index)" ref="ii"></i>
               <span>{{item.goods}}</span>
             </li>
             <li>
-              <i @click="con"></i>
+              <i @click="con(item.id)"></i>
             </li>
           </ul>
         </div>
         <!-- 简介 -->
         <van-row class="info">
-          <van-col class="text" span="15">
+          <van-col class="text" span="10">
             <a href="javascript:;">
-              <p>@名字</p>
+              <p>@ {{userList.username}}</p>
             </a>
-            <span>太可爱啦哈哈哈哈哈哈嗝</span>
-            <van-notice-bar text="名字原创的音乐哈哈哈哈哈嗝" background="none" color="#fff" />
+            <span>{{item.vtext}}</span>
+            <van-notice-bar :text="item.vmusic+' '+item.vmusic+' '+item.vmusic" background="none" color="#fff" />
           </van-col>
-          <van-col class="img" offset="2">
-            <van-image round width="4rem" height="4rem" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+          <van-col class="img" offset="6">
+            <van-image round width="4rem" height="4rem" :src="userList.photo" />
           </van-col>
         </van-row>
       </van-swipe-item>
@@ -58,12 +58,15 @@
       </van-row>
     </div>
     <!-- 评论 -->
-    <van-action-sheet v-model="show" title="401 条评论" @close="close">
-      <van-row>
+    <van-action-sheet v-model="show" :title="conTotal+' 条评论'" @close="close">
+      <van-row v-for="(item, index) in conList" :key="index" style="padding:5px 0px">
         <van-col span="2" offset="1">
-          <van-image round width="3rem" height="3rem" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+          <van-image round width="2.5rem" height="2.5rem" src="https://img.yzcdn.cn/vant/cat.jpeg" />
         </van-col>
-        <van-col span="17" offset="1">评论</van-col>
+        <van-col span="15" offset="3">
+          <div style="color:#a4a9aa">{{item.u_id}}</div>
+          <span>{{item.comment}}</span>
+        </van-col>
         <van-col span="2" offset="1">赞</van-col>
       </van-row>
     </van-action-sheet>
@@ -79,7 +82,13 @@ export default {
       // 控制头部推荐和关注的切换
       status: '推荐',
       // 视频信息
-      videoList: []
+      videoList: [],
+      // 用户信息
+      userList: {},
+      // 评论列表
+      conList: [],
+      // 总评论
+      conTotal: 0
     }
   },
   methods: {
@@ -94,9 +103,14 @@ export default {
       }
     },
     // 打开评论
-    con () {
+    con (id) {
       this.show = true
       document.querySelector('.navigate').style.display = 'none'
+      this.$Http.get(`/comment/show/${id}`).then(res => {
+        console.log(res.data.data)
+        this.conList = res.data.data
+        this.conTotal = res.data.num
+      })
     },
     // 关闭评论
     close () {
@@ -109,11 +123,19 @@ export default {
       this.$Http.get('/index').then(res => {
         if (res.data.code === 200) {
           this.videoList = res.data.data
+          this.$Http.get(`/user/${this.videoList[0].user_id}`).then(res1 => {
+            this.userList = res1.data.data
+          })
+        } else {
+          // this.$
         }
       })
     },
     // 切换视频
     onChange (index) {
+      this.$Http.get(`/user/${this.videoList[index].user_id}`).then(res1 => {
+        this.userList = res1.data.data
+      })
       let qq = document.querySelectorAll('video')
       qq.forEach(element => {
         element.pause()
@@ -215,7 +237,7 @@ export default {
   color: white;
 }
 .van-notice-bar {
-  padding: 20px 0 0;
+  padding: 10px 0 0;
 }
 .info .img {
   margin-top: 50px;
