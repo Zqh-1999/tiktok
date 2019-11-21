@@ -20,7 +20,7 @@
               <van-image round width="70" height="70" :src="userList.photo" />
             </li>
             <li>
-              <i @click="heart(index)" ref="ii"></i>
+              <i @click="heart(index,item)" ref="ii"></i>
               <span>{{item.goods}}</span>
             </li>
             <li>
@@ -129,16 +129,32 @@ export default {
       // 子评论用户
       suser: [],
       // 评论输入内容
-      value: ''
+      value: '',
+      // 当前用户ID
+      userID: sessionStorage.getItem('userId')
     }
   },
   methods: {
     // 点赞
-    heart (index) {
+    heart (index, item) {
       if (this.$refs.ii[index].className === 'like-active') {
+        this.$Http.put('/praise', {
+          user_id: this.userID,
+          id: item.id,
+          zan: false
+        }).then(res => {
+          console.log(res)
+        })
         this.$refs.ii[index].className = ''
         this.videoList[index].goods--
       } else {
+        this.$Http.put('/praise', {
+          user_id: this.userID,
+          id: item.id,
+          zan: true
+        }).then(res => {
+          console.log(res)
+        })
         this.$refs.ii[index].className = 'like-active'
         this.videoList[index].goods++
       }
