@@ -7,7 +7,7 @@ const mysql = require('../db')
 module.exports.index = (req, res) => {
   mysql.query('SELECT * FROM video', (error, results) => {
     if (error) {
-      res.json({
+      return res.json({
         ok: 0,
         err: error
       })
@@ -35,7 +35,7 @@ module.exports.videos = (req, res) => {
   if (city) {
     mysql.query("SELECT * FROM video WHERE city = ?", city, (error, result) => {
       if (error) {
-        res.json({
+        return res.json({
           ok: 0,
           err: error
         })
@@ -48,7 +48,7 @@ module.exports.videos = (req, res) => {
   } else if (user_id) {
     mysql.query("SELECT * FROM video WHERE user_id = ?", user_id, (error, result) => {
       if (error) {
-        res.json({
+        return res.json({
           ok: 0,
           err: error
         })
@@ -61,7 +61,7 @@ module.exports.videos = (req, res) => {
   } else if (vtext) {
     mysql.query(`SELECT * FROM video WHERE vtext LIKE '%${vtext}%'`, (error, result) => {
       if (error) {
-        res.json({
+        return res.json({
           ok: 0,
           err: error
         })
@@ -82,7 +82,7 @@ module.exports.video = (req, res) => {
   // console.log(id)
   mysql.query("SELECT * FROM video WHERE id = ?", id, (error, result) => {
     if (error) {
-      res.json({
+      return res.json({
         ok: 0,
         err: error
       })
@@ -101,7 +101,7 @@ module.exports.user = (req, res) => {
   let id = req.params.id
   mysql.query("SELECT * FROM user WHERE id = ?", id, (error, result) => {
     if (error) {
-      res.json({
+      return res.json({
         ok: 0,
         err: error
       })
@@ -138,7 +138,7 @@ module.exports.comment = (req, res) => {
   let id = req.params.id
   mysql.query("SELECT * FROM comment where v_id = ?", id, (error, result1) => {
     if (error) {
-      res.json({
+      return res.json({
         ok: 0,
         err: error
       })
@@ -147,7 +147,7 @@ module.exports.comment = (req, res) => {
     mysql.query("SELECT * FROM com_son", (error1, result2) => {
 
       if (error1) {
-        res.json({
+        return res.json({
           ok: 0,
           err: error1
         })
@@ -176,7 +176,7 @@ module.exports.comadd = (req, res) => {
   let params = req.body
   mysql.query("INSERT INTO comment SET ?", params, (err, result) => {
     if (err) {
-      res.json({
+      return res.json({
         ok: 0,
         err: err
       })
@@ -192,7 +192,7 @@ module.exports.comaddson = (req, res) => {
   let params = req.body
   mysql.query("INSERT INTO com_son SET ?", params, (err, result) => {
     if (err) {
-      res.json({
+      return res.json({
         ok: 0,
         err: err
       })
@@ -212,7 +212,7 @@ module.exports.praise = (req, res) => {
   if (zan == "true") {
     mysql.query("SELECT goods FROM video WHERE id = ?", id, (err, ret) => {
       if (err) {
-        res.json({
+        return res.json({
           ok: 0,
           err: err
         })
@@ -220,14 +220,14 @@ module.exports.praise = (req, res) => {
       // console.log(ret[0].goods)
       mysql.query(`UPDATE video SET goods = ? WHERE id = ${id}`, ret[0].goods + 1, (err1, ret1) => {
         if (err1) {
-          res.json({
+          return res.json({
             ok: 0,
             err: err1
           })
         } else {
           mysql.query("select love from user where id = ?", user_id, (err2, ret2) => {
             if (err2) {
-              res.json({
+              return res.json({
                 ok: 0,
                 err: err2
               })
@@ -259,7 +259,7 @@ module.exports.praise = (req, res) => {
   } else if (zan == "false") {
     mysql.query("SELECT goods FROM video WHERE id = ?", id, (err, ret) => {
       if (err) {
-        res.json({
+        return res.json({
           ok: 0,
           err: err
         })
@@ -268,7 +268,7 @@ module.exports.praise = (req, res) => {
 
       mysql.query(`UPDATE video SET goods = ? WHERE id = ${id}`, ret[0].goods - 1, (err1, ret1) => {
         if (err1) {
-          res.json({
+          return res.json({
             ok: 0,
             err: err1
           })
@@ -276,7 +276,7 @@ module.exports.praise = (req, res) => {
           // 查询用户的
           mysql.query("select love from user where id = ?", user_id, (err2, ret2) => {
             if (err2) {
-              res.json({
+              return res.json({
                 ok: 0,
                 err: err2
               })
@@ -298,7 +298,12 @@ module.exports.praise = (req, res) => {
             const str = arr.join(",")
             // console.log(str)
             mysql.query(`update user set love = ? where id = ${user_id}`, str, (error, result) => {
-              if (error) return console.log(error)
+              if (error) {
+                return res.json({
+                  ok: 0,
+                  error: error
+                })
+              }
               res.json({
                 ok: 1,
                 data: {
@@ -317,7 +322,9 @@ module.exports.praise = (req, res) => {
 // 用户关注
 module.exports.follow = (req, res) => {
   let id = req.body.id;
-  let att_id = req.body.att_id
+  let att_id = req.body.att_id;
+  let atten = req.body.atten;
+  // 查询用户的关注用户
   mysql.query("select attention from user where id = ?", id, (error, result) => {
     if (error) {
       res.json({
@@ -325,18 +332,54 @@ module.exports.follow = (req, res) => {
         error: error
       })
     }
-
     let str = result[0].attention
     let arr = str.split(",")
-
-    function unique(arr) {
-      return Array.from(new Set(arr))
+    if (atten == "true") {
+      // 关注用户
+      function unique(arr) {
+        return Array.from(new Set(arr))
+      }
+      arr.forEach((v, i) => {
+        if (v == id) {
+          arr.splice(i, 1)
+        }
+      })
+      arr.push(att_id);
+      str = unique(arr).join(",")
+      // console.log(str)
+      mysql.query(`update user set attention = ? where id = ${id}`, str, (error1, result1) => {
+        if (error1) {
+          return res.json({
+            ok: 0,
+            error: error1
+          })
+        }
+        res.json({
+          ok: 1
+        })
+      })
+    } else if (atten == "false") {
+      // 取消关注
+      function unique(arr) {
+        return Array.from(new Set(arr))
+      }
+      arr.forEach((v, i) => {
+        if (v == att_id) {
+          arr.splice(i, 1)
+        }
+      })
+      str = unique(arr).join(",")
+      mysql.query(`update user set attention = ? where id = ${id}`, str, (error1, result1) => {
+        if (error1) {
+          return res.json({
+            ok: 0,
+            error: error1
+          })
+        }
+        res.json({
+          ok: 1
+        })
+      })
     }
-    arr.push(att_id);
-    str = unique(arr).join(",")
-    console.log(str)
-    mysql.query(`update user set attention = ? where id = ${id}`, str, (error1, result1) => {
-
-    })
   })
 }
