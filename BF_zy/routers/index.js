@@ -28,7 +28,7 @@ router.post("/comment/add",controller.comadd)
 router.post("/comment/add/son",controller.comaddson)
 
 // 视频点赞
-
+router.put("/praise/:id(\\d+)",controller.praise)
 
 
 // 评论点赞
