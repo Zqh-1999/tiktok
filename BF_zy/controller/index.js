@@ -95,6 +95,23 @@ module.exports.video = (req, res) => {
   })
 }
 
+// 根据id查询多个用户
+module.exports.videod = (req, res) => {
+   let ids=req.query.ids;
+   mysql.query(`SELECT * FROM video WHERE id in (${ids})`, (error, result) => {
+    if (error) {
+      return res.json({
+        ok: 0,
+        err: error
+      })
+    }
+    res.json({
+      ok: 1,
+      data: result
+    })
+  })
+}
+
 
 // 根据用户id查询用户信息
 module.exports.user = (req, res) => {

@@ -13,6 +13,8 @@ router.get("/videos",controller.videos)
 
 // 根据id查询视频
 router.get("/videos/:id(\\d+)",controller.video)
+// 根据id查询多个视频
+router.get("/videod",controller.videod)
 
 // 用户
 // 根据用户id查询用户信息
