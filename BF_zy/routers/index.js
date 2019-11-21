@@ -17,6 +17,8 @@ router.get("/videos/:id(\\d+)",controller.video)
 // 用户
 // 根据用户id查询用户信息
 router.get("/user/:id(\\d+)",controller.user)
+// 查询多个用户信息
+router.get("/users",controller.users)
 
 // 评论
 // 查询评论

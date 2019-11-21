@@ -29,9 +29,9 @@ module.exports.videos = (req, res) => {
   // 视频简介
   let vtext = req.query.vtext
 
-  console.log(city);
-  console.log(user_id);
-  console.log(vtext)
+  // console.log(city);
+  // console.log(user_id);
+  // console.log(vtext)
   if (city) {
     mysql.query("SELECT * FROM video WHERE city = ?", city, (error, result) => {
       if (error) {
@@ -72,13 +72,14 @@ module.exports.videos = (req, res) => {
       })
     })
   }
+
 }
 
 
 // 根据id查询视频
 module.exports.video = (req, res) => {
   let id = req.params.id
-  console.log(id)
+  // console.log(id)
   mysql.query("SELECT * FROM video WHERE id = ?", id, (error, result) => {
     if (error) {
       res.json({
@@ -86,7 +87,7 @@ module.exports.video = (req, res) => {
         err: error
       })
     }
-    console.log(result)
+    // console.log(result)
     res.json({
       ok: 1,
       data: result[0]
@@ -98,7 +99,7 @@ module.exports.video = (req, res) => {
 // 根据用户id查询用户信息
 module.exports.user = (req, res) => {
   let id = req.params.id
-  mysql.query("SELECT * FROM user WHERE id = ?", id, (error, result) => {
+  mysql.query("SELECT * FROM user WHERE id in ?", id, (error, result) => {
     if (error) {
       res.json({
         ok: 0,
@@ -109,6 +110,24 @@ module.exports.user = (req, res) => {
     res.json({
       ok: 1,
       data: result[0]
+    })
+  })
+}
+// 查询多个用户信息
+module.exports.users = (req, res) => {
+  let id = req.query.id
+  // let id = [1,2,3,4]
+  mysql.query(`SELECT * FROM user WHERE id in (${id})`, (error, result) => {
+    if (error) {
+      res.json({
+        ok: 0,
+        err: error
+      })
+    }
+    // console.log(result)
+    res.json({
+      ok: 1,
+      data: result
     })
   })
 }
@@ -187,7 +206,8 @@ module.exports.comaddson = (req, res) => {
 // 视频点赞
 module.exports.praise = (req, res) => {
   let zan = req.body.zan
-  let id = req.params.id
+  let id = req.body.id
+  let user_id = req.body.user_id
   if (zan == "true") {
     zen = true
     mysql.query("SELECT goods FROM video WHERE id = ?", id, (err, ret) => {
@@ -210,6 +230,14 @@ module.exports.praise = (req, res) => {
             data: {
               goods: ret[0].goods + 1
             }
+          })
+        }
+      })
+      mysql.query("select love from user where user_id = ?",user_id,(err2,ret2)=>{
+        if(err2){
+          res.json({
+            ok:0,
+            err
           })
         }
       })
