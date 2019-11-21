@@ -9,7 +9,7 @@ app.use(cors())
 // 挂载首页路由
 app.use(require('./routers/index'))
 
-app.listen(80)
+app.listen(8181)
 
 let OSS = require('ali-oss')
 let client = new OSS({
