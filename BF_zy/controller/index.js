@@ -133,7 +133,7 @@ module.exports.user = (req, res) => {
 // 查询多个用户信息
 module.exports.users = (req, res) => {
   let id = req.query.id
-  // let id = [1,2,3,4]
+  
   mysql.query(`SELECT * FROM user WHERE id in (${id})`, (error, result) => {
     if (error) {
       return res.json({
@@ -141,12 +141,11 @@ module.exports.users = (req, res) => {
         err: error
       })
     }
-    // console.log(result)
     res.json({
-      ok: 1,
-      data: result
+      ok:1,
+      data:result[0]
     })
-  })
+})
 }
 
 // 根据视频id查询视频评论
