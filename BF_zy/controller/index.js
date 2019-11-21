@@ -206,10 +206,10 @@ module.exports.comaddson = (req, res) => {
 // 视频点赞
 module.exports.praise = (req, res) => {
   let zan = req.body.zan
-  let id = req.body.id
   let user_id = req.body.user_id
+  let id = req.body.id
+  console.log(user_id)
   if (zan == "true") {
-    zen = true
     mysql.query("SELECT goods FROM video WHERE id = ?", id, (err, ret) => {
       if (err) {
         res.json({
@@ -225,23 +225,36 @@ module.exports.praise = (req, res) => {
             err: err1
           })
         } else {
-          res.json({
-            ok: 1,
-            data: {
-              goods: ret[0].goods + 1
+          mysql.query("select love from user where id = ?", user_id, (err2, ret2) => {
+            if (err2) {
+              res.json({
+                ok: 0,
+                err: err2
+              })
             }
+            // console.log(ret2)
+            let arr = ret2[0].love.split(",")
+            arr.push(id)
+
+            function unique(arr) {
+              return Array.from(new Set(arr))
+            }
+            const str = unique(arr).join(",")
+            // console.log(str)
+            mysql.query(`update user set love = ? where id = ${user_id}`, str, (error, result) => {
+              if (error) return console.log(error)
+              res.json({
+                ok: 1,
+                data: {
+                  goods: ret[0].goods + 1
+                }
+              })
+            })
           })
+
         }
       })
-      mysql.query("select love from user where user_id = ?", user_id, (err2, ret2) => {
-        if (err2) {
-          res.json({
-            ok: 0,
-            err: err2
-          })
-        }
-        console.log(ret2)
-      })
+
     })
   } else if (zan == "false") {
     mysql.query("SELECT goods FROM video WHERE id = ?", id, (err, ret) => {
@@ -260,11 +273,38 @@ module.exports.praise = (req, res) => {
             err: err1
           })
         } else {
-          res.json({
-            ok: 2,
-            data: {
-              goods: ret[0].goods - 1
+          mysql.query("select love from user where id = ?", user_id, (err2, ret2) => {
+            if (err2) {
+              res.json({
+                ok: 0,
+                err: err2
+              })
             }
+            Array.prototype.remove = function (val) {
+              var index = this.indexOf(val);
+              if (index > -1) {
+                this.splice(index, 1);
+              }
+            };
+            let arr = ret2[0].love.split(",")
+            arr.forEach(v => {
+              if (v == id) {
+                arr.remove(v)
+                // console.log(v)
+              }
+            });
+            // console.log(arr)
+            const str = arr.join(",")
+            // console.log(str)
+            mysql.query(`update user set love = ? where id = ${user_id}`, str, (error, result) => {
+              if (error) return console.log(error)
+              res.json({
+                ok: 1,
+                data: {
+                  goods: ret[0].goods - 1
+                }
+              })
+            })
           })
         }
       })
