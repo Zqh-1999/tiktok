@@ -6,7 +6,12 @@ const mysql = require('../db')
 // 查询所有视频
 module.exports.index = (req, res) => {
   mysql.query('SELECT * FROM video', (error, results) => {
-    if (error) return console.log(error)
+    if (error) {
+      res.json({
+        ok: 0,
+        err: error
+      })
+    }
     res.json({
       code: 200,
       data: results
@@ -29,7 +34,12 @@ module.exports.videos = (req, res) => {
   console.log(vtext)
   if (city) {
     mysql.query("SELECT * FROM video WHERE city = ?", city, (error, result) => {
-      if (error) return console.log(error);
+      if (error) {
+        res.json({
+          ok: 0,
+          err: error
+        })
+      }
       res.json({
         ok: 1,
         data: result[0]
@@ -37,7 +47,12 @@ module.exports.videos = (req, res) => {
     })
   } else if (user_id) {
     mysql.query("SELECT * FROM video WHERE user_id = ?", user_id, (error, result) => {
-      if (error) return console.log(error);
+      if (error) {
+        res.json({
+          ok: 0,
+          err: error
+        })
+      }
       res.json({
         ok: 2,
         data: result[0]
@@ -45,14 +60,18 @@ module.exports.videos = (req, res) => {
     })
   } else if (vtext) {
     mysql.query(`SELECT * FROM video WHERE vtext LIKE '%${vtext}%'`, (error, result) => {
-      if (error) return console.log(error);
+      if (error) {
+        res.json({
+          ok: 0,
+          err: error
+        })
+      }
       res.json({
         ok: 3,
         data: result
       })
     })
   }
-
 }
 
 
@@ -61,7 +80,12 @@ module.exports.video = (req, res) => {
   let id = req.params.id
   console.log(id)
   mysql.query("SELECT * FROM video WHERE id = ?", id, (error, result) => {
-    if (error) return console.log(error);
+    if (error) {
+      res.json({
+        ok: 0,
+        err: error
+      })
+    }
     console.log(result)
     res.json({
       ok: 1,
@@ -75,8 +99,13 @@ module.exports.video = (req, res) => {
 module.exports.user = (req, res) => {
   let id = req.params.id
   mysql.query("SELECT * FROM user WHERE id = ?", id, (error, result) => {
-    if (error) return console.log(error);
-    console.log(result)
+    if (error) {
+      res.json({
+        ok: 0,
+        err: error
+      })
+    }
+    // console.log(result)
     res.json({
       ok: 1,
       data: result[0]
@@ -89,11 +118,21 @@ module.exports.comment = (req, res) => {
   let num = 0
   let id = req.params.id
   mysql.query("SELECT * FROM comment where v_id = ?", id, (error, result1) => {
-    if (error) return console.log(error)
+    if (error) {
+      res.json({
+        ok: 0,
+        err: error
+      })
+    }
     num = result1.length
     mysql.query("SELECT * FROM com_son", (error1, result2) => {
 
-      if (error1) return console.log(error1)
+      if (error1) {
+        res.json({
+          ok: 0,
+          err: error1
+        })
+      }
       for (let i = 0; i < result1.length; i++) {
         result1[i].arr = []
         for (let j = 0; j < result2.length; j++) {
@@ -117,7 +156,12 @@ module.exports.comment = (req, res) => {
 module.exports.comadd = (req, res) => {
   let params = req.body
   mysql.query("INSERT INTO comment SET ?", params, (err, result) => {
-    if (err) return console.log(err);
+    if (err) {
+      res.json({
+        ok: 0,
+        err: err
+      })
+    }
     res.json({
       ok: 1
     })
@@ -128,7 +172,12 @@ module.exports.comadd = (req, res) => {
 module.exports.comaddson = (req, res) => {
   let params = req.body
   mysql.query("INSERT INTO com_son SET ?", params, (err, result) => {
-    if (err) return console.log(err);
+    if (err) {
+      res.json({
+        ok: 0,
+        err: err
+      })
+    }
     res.json({
       ok: 1
     })
@@ -141,30 +190,39 @@ module.exports.praise = (req, res) => {
   let id = req.params.id
   if (zan == "true") {
     zen = true
-      mysql.query("SELECT goods FROM video WHERE id = ?", id, (err, ret) => {
-        if (err) return console.log(err);
-        console.log(ret[0].goods)
-
-        mysql.query(`UPDATE video SET goods = ? WHERE id = ${id}`, ret[0].goods + 1, (err1, ret1) => {
-          if (err1) {
-            res.json({
-              ok: 0,
-              err: err1
-            })
-          } else {
-            res.json({
-              ok: 1,
-              data: {
-                goods: ret[0].goods + 1
-              }
-            })
-          }
-        })
-      })
-  }else if(zan == "false"){
     mysql.query("SELECT goods FROM video WHERE id = ?", id, (err, ret) => {
-      if (err) return console.log(err);
-      console.log(ret[0].goods)
+      if (err) {
+        res.json({
+          ok: 0,
+          err: err
+        })
+      }
+      // console.log(ret[0].goods)
+      mysql.query(`UPDATE video SET goods = ? WHERE id = ${id}`, ret[0].goods + 1, (err1, ret1) => {
+        if (err1) {
+          res.json({
+            ok: 0,
+            err: err1
+          })
+        } else {
+          res.json({
+            ok: 1,
+            data: {
+              goods: ret[0].goods + 1
+            }
+          })
+        }
+      })
+    })
+  } else if (zan == "false") {
+    mysql.query("SELECT goods FROM video WHERE id = ?", id, (err, ret) => {
+      if (err) {
+        res.json({
+          ok: 0,
+          err: err
+        })
+      }
+      // console.log(ret[0].goods)
 
       mysql.query(`UPDATE video SET goods = ? WHERE id = ${id}`, ret[0].goods - 1, (err1, ret1) => {
         if (err1) {
