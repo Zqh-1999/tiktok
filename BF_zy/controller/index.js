@@ -86,13 +86,13 @@ module.exports.user = (req, res) => {
 
 // 根据视频id查询视频评论
 module.exports.comment = (req, res) => {
-  let num=0
+  let num = 0
   let id = req.params.id
   mysql.query("SELECT * FROM comment where v_id = ?", id, (error, result1) => {
     if (error) return console.log(error)
-    num=result1.length
+    num = result1.length
     mysql.query("SELECT * FROM com_son", (error1, result2) => {
-    
+
       if (error1) return console.log(error1)
       for (let i = 0; i < result1.length; i++) {
         result1[i].arr = []
@@ -106,7 +106,7 @@ module.exports.comment = (req, res) => {
       res.json({
         ok: 1,
         data: result1,
-        num:num
+        num: num
       })
     })
   })
@@ -116,10 +116,10 @@ module.exports.comment = (req, res) => {
 // 添加父评论
 module.exports.comadd = (req, res) => {
   let params = req.body
-  mysql.query("INSERT INTO comment SET ?",params,(err,result)=>{
-    if(err)return console.log(err);
+  mysql.query("INSERT INTO comment SET ?", params, (err, result) => {
+    if (err) return console.log(err);
     res.json({
-      ok:1
+      ok: 1
     })
   })
 }
@@ -127,16 +127,63 @@ module.exports.comadd = (req, res) => {
 // 添加子评论
 module.exports.comaddson = (req, res) => {
   let params = req.body
-  mysql.query("INSERT INTO com_son SET ?",params,(err,result)=>{
-    if(err)return console.log(err);
+  mysql.query("INSERT INTO com_son SET ?", params, (err, result) => {
+    if (err) return console.log(err);
     res.json({
-      ok:1
+      ok: 1
     })
   })
 }
 
 // 视频点赞
+module.exports.praise = (req, res) => {
+  let zan = req.body.zan
+  let id = req.params.id
+  if (zan == "true") {
+    zen = true
+      mysql.query("SELECT goods FROM video WHERE id = ?", id, (err, ret) => {
+        if (err) return console.log(err);
+        console.log(ret[0].goods)
 
+        mysql.query(`UPDATE video SET goods = ? WHERE id = ${id}`, ret[0].goods + 1, (err1, ret1) => {
+          if (err1) {
+            res.json({
+              ok: 0,
+              err: err1
+            })
+          } else {
+            res.json({
+              ok: 1,
+              data: {
+                goods: ret[0].goods + 1
+              }
+            })
+          }
+        })
+      })
+  }else if(zan == "false"){
+    mysql.query("SELECT goods FROM video WHERE id = ?", id, (err, ret) => {
+      if (err) return console.log(err);
+      console.log(ret[0].goods)
+
+      mysql.query(`UPDATE video SET goods = ? WHERE id = ${id}`, ret[0].goods - 1, (err1, ret1) => {
+        if (err1) {
+          res.json({
+            ok: 0,
+            err: err1
+          })
+        } else {
+          res.json({
+            ok: 2,
+            data: {
+              goods: ret[0].goods - 1
+            }
+          })
+        }
+      })
+    })
+  }
+}
 
 
 // 评论点赞
