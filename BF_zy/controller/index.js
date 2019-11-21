@@ -313,8 +313,4 @@ module.exports.praise = (req, res) => {
 }
 
 
-// 评论点赞
-
-
-
 // 用户关注
