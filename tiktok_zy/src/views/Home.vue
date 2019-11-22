@@ -29,18 +29,18 @@
         </div>
         <!-- 简介 -->
         <van-row class="info">
-          <van-col class="text" span="10">
+          <van-col class="text" span="14">
             <a href="javascript:;">
               <p>@ {{userList.username}}</p>
             </a>
             <span>{{item.vtext}}</span>
             <van-notice-bar
-              :text="item.vmusic+' '+item.vmusic+' '+item.vmusic"
+              :text="item.vmusic+' _ '+item.vmusic+' _ '+item.vmusic+' _ '+item.vmusic"
               background="none"
               color="#fff"
             />
           </van-col>
-          <van-col class="img" offset="7">
+          <van-col class="img" offset="6" span="4">
             <van-image round width="4rem" height="4rem" :src="userList.photo" />
           </van-col>
         </van-row>
@@ -348,7 +348,7 @@ export default {
   position: absolute;
   bottom: 80px;
   left: 20px;
-  width: 100%;
+  width: 90%;
   color: white;
 }
 .van-notice-bar {
