@@ -24,7 +24,7 @@
   bottom: 10px;
   width: 100%;
   box-sizing: border-box;
-  padding: 18px 30px;
+  padding: 12px 30px;
   text-align: center;
   font-size: 17px;
   font-weight: 700

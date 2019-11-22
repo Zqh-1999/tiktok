@@ -16,24 +16,29 @@
       </van-col>
     </van-row>
     <!-- sch -->
-    <van-row class="nosch" v-if="keySch == false">搜索发现更多精彩内容</van-row>
+    <van-row class="nosch" v-if="videoList.length == 0">搜索发现更多精彩内容</van-row>
     <!-- sch -->
     <van-row class="schall" v-else>
-      <van-row class="sch">
+      <van-row class="sch" v-for="(item, index) in videoList" :key="index">
         <van-row class="schpo">
-          <van-col span=4>
-            <van-image round width="3rem" height="3rem" src="https://img.yzcdn.cn/vant/cat.jpeg" />
+          <van-col span="4">
+            <van-image round width="3rem" height="3rem" :src="photo[index]" />
           </van-col>
           <van-col>
-            <span offset="1">居官</span>
+            <span offset="1">{{username[index]}}</span>
           </van-col>
         </van-row>
         <van-row class="schtitle">
-          <p>学成归来，爹就给你一个上骑都尉当当，骑五花马，披重甲，多气派。</p>
+          <p>{{item.vtext}}</p>
         </van-row>
         <van-row class="schvideo">
-          <van-col span=20>
-            <video width="100%" height="80%" src="https://doutiktok.oss-cn-beijing.aliyuncs.com/video/video/43n6gl_h.mp4"></video>
+          <van-col span="20" @click="start(index)">
+            <video ref="video" width="100%" :src="item.url" :poster="item.vurl" preload></video>
+            <img
+              ref="img"
+              src="https://tiktokdou.oss-cn-beijing.aliyuncs.com/icons8-%E6%92%AD%E6%94%BE-30.png"
+              alt
+            />
           </van-col>
         </van-row>
       </van-row>
@@ -47,12 +52,41 @@ export default {
     return {
       value: '',
       // 控制搜索时的显示隐藏
-      keySch: false
+      keySch: false,
+      // 搜索出来的视频
+      videoList: [],
+      // 用户名
+      username: [],
+      // 用户头像
+      photo: []
     }
   },
   methods: {
+    // 搜索视频
     search () {
       this.keySch = true
+      this.$Http.get(`/videos`, { params: { vtext: this.value } }).then(res => {
+        this.videoList = res.data.data
+        if (this.videoList.length === 0) {
+          this.$toast.fail('没有搜寻到视频')
+        }
+        this.videoList.forEach(element => {
+          this.$Http.get(`/user/${element.user_id}`).then(res => {
+            this.username.push(res.data.data.username)
+            this.photo.push(res.data.data.photo)
+          })
+        })
+      })
+    },
+    // 播放与暂停
+    start (index) {
+      if (this.$refs.img[index].style.display !== 'none') {
+        this.$refs.video[index].play()
+        this.$refs.img[index].style.display = 'none'
+      } else {
+        this.$refs.video[index].pause()
+        this.$refs.img[index].style.display = 'block'
+      }
     }
   }
 }
@@ -66,7 +100,7 @@ export default {
 }
 .top {
   padding-bottom: 10px;
-  border-bottom: 1px solid #34343c
+  border-bottom: 1px solid #34343c;
 }
 .top-search i {
   display: inline-block;
@@ -115,5 +149,15 @@ export default {
 .schtitle p {
   color: aliceblue;
   font-size: 15px;
+}
+.schvideo .van-col {
+  position: relative;
+}
+.schvideo img {
+  position: absolute;
+  top: 45%;
+  left: 45%;
+  width: 50px;
+  height: 50px;
 }
 </style>
