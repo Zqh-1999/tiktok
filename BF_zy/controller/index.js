@@ -39,7 +39,7 @@ module.exports.videos = (req, res) => {
       }
       res.json({
         ok: 1,
-        data: result[0]
+        data: result
       })
     })
   } else if (user_id) {
@@ -52,7 +52,7 @@ module.exports.videos = (req, res) => {
       }
       res.json({
         ok: 2,
-        data: result[0]
+        data: result
       })
     })
   } else if (vtext) {
