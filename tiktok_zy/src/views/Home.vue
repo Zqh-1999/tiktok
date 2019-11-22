@@ -5,7 +5,6 @@
       <van-swipe-item v-for="(item, index) in videoList" :key="index">
         <video
           width="100%"
-          height="100%"
           :autoplay="index==0 ? true:false"
           loop
           x5-video-player-fullscreen="true"
@@ -41,7 +40,7 @@
               color="#fff"
             />
           </van-col>
-          <van-col class="img" offset="6">
+          <van-col class="img" offset="7">
             <van-image round width="4rem" height="4rem" :src="userList.photo" />
           </van-col>
         </van-row>
@@ -51,7 +50,7 @@
     <div class="top">
       <van-row>
         <van-col span="3">
-          <i></i>
+          <i @click="search"></i>
         </van-col>
         <van-col offset="4" style="color:#fff">
           <span @click="status = '关注'">关注</span>
@@ -74,7 +73,7 @@
             />
           </van-col>
           <van-col span="15" offset="3">
-            <div style="color:#a4a9aa" v-if="fuser.length != 0">{{fuser[index].username}}</div>
+            <div style="color:#a4a9aa" v-if="fuser.length != 0">{{fuser[index]}}</div>
             <span>{{item.comment}}</span>
           </van-col>
           <van-collapse-item
@@ -93,21 +92,29 @@
                 />
               </van-col>
               <van-col span="15" offset="3" style="color:#5f5f60;text-align: left">
-                <div style="color:#a4a9aa" v-if="suser.length != 0">{{suser[index1].username}}</div>
+                <div style="color:#a4a9aa" v-if="suser.length != 0">{{suser[index1]}}</div>
                 <span>{{item1.comments_son}}</span>
               </van-col>
             </van-row>
           </van-collapse-item>
         </van-row>
       </van-collapse>
-      <van-cell-group>
-        <van-field v-model="value" placeholder="留下你的精彩评论吧" />
-      </van-cell-group>
+      <van-row>
+        <van-col span="20">
+          <van-cell-group>
+            <van-field v-model="value" placeholder="留下你的精彩评论吧" />
+          </van-cell-group>
+        </van-col>
+        <van-col span="2" offset="1" style="padding: 8px 0px 0px 0px; box-sizing: border-box">
+          <img @click="comment" :src="value.length == 0 ? 'https://tiktokdou.oss-cn-beijing.aliyuncs.com/icons8-%E9%82%AE%E4%BB%B6%E5%8F%91%E9%80%81-48.png':'https://tiktokdou.oss-cn-beijing.aliyuncs.com/icons8-%E9%82%AE%E4%BB%B6%E5%8F%91%E9%80%81-48%20%281%29.png'" width="30px" alt="">
+        </van-col>
+      </van-row>
     </van-action-sheet>
   </div>
 </template>
 
 <script>
+import qs from 'qs'
 export default {
   data () {
     return {
@@ -131,30 +138,42 @@ export default {
       // 评论输入内容
       value: '',
       // 当前用户ID
-      userID: sessionStorage.getItem('userId')
+      userID: sessionStorage.getItem('userId') || 1,
+      // 视频ID
+      videoID: 0
     }
   },
   methods: {
     // 点赞
     heart (index, item) {
       if (this.$refs.ii[index].className === 'like-active') {
-        this.$Http.put('/praise', {
-          user_id: this.userID,
-          id: item.id,
-          zan: false
-        }).then(res => {
-          console.log(res)
-        })
+        this.$Http
+          .put(
+            '/praise',
+            qs.stringify({
+              user_id: this.userID,
+              id: item.id,
+              zan: false
+            })
+          )
+          .then(res => {
+            // console.log(res)
+          })
         this.$refs.ii[index].className = ''
         this.videoList[index].goods--
       } else {
-        this.$Http.put('/praise', {
-          user_id: this.userID,
-          id: item.id,
-          zan: true
-        }).then(res => {
-          console.log(res)
-        })
+        this.$Http
+          .put(
+            '/praise',
+            qs.stringify({
+              user_id: this.userID,
+              id: item.id,
+              zan: true
+            })
+          )
+          .then(res => {
+            // console.log(res)
+          })
         this.$refs.ii[index].className = 'like-active'
         this.videoList[index].goods++
       }
@@ -162,29 +181,44 @@ export default {
     // 打开评论
     con (id) {
       this.show = true
+      this.videoID = id
       document.querySelector('.navigate').style.display = 'none'
       this.$Http.get(`/comment/show/${id}`).then(res => {
         if (res.data.ok === 1) {
           this.conList = res.data.data
           this.conTotal = res.data.num
-          let fid = []
+          this.fuser = []
+          this.suser = []
           this.conList.forEach(element => {
-            fid.push(element.u_id)
-          })
-          let sid = []
-          this.conList.forEach(element => {
-            element.arr.forEach(element => {
-              sid.push(element.u_id)
+            this.$Http.get(`/user/${element.u_id}`).then(res => {
+              this.fuser.push(res.data.data.username)
             })
           })
-          this.$Http.get(`/users`, { params: { id: fid } }).then(res => {
-            this.fuser = res.data.data
-          })
-          this.$Http.get(`/users`, { params: { id: sid } }).then(res => {
-            this.suser = res.data.data
+          this.conList.forEach(element => {
+            element.arr.forEach(element1 => {
+              this.$Http.get(`/user/${element1.u_id}`).then(res => {
+                this.suser.push(res.data.data.username)
+              })
+            })
           })
         }
       })
+    },
+    // 发送评论
+    comment () {
+      if (this.value.length !== 0) {
+        this.$Http.post('/comment/add', qs.stringify({
+          v_id: this.videoID,
+          u_id: this.userID,
+          comment: this.value,
+          times: Math.round(new Date().getTime() / 1000)
+        })).then(res => {
+          if (res.data.ok === 1) {
+            this.value = ''
+            this.con(this.videoID)
+          }
+        })
+      }
     },
     // 关闭评论
     close () {
@@ -192,10 +226,12 @@ export default {
         document.querySelector('.navigate').style.display = 'block'
       }, 300)
       this.activeNames = []
+      this.value = ''
     },
     // 获取视频
     getVideoList () {
       this.$Http.get('/index').then(res => {
+        console.log(res.data)
         if (res.data.code === 200) {
           this.videoList = res.data.data
           this.$Http.get(`/user/${this.videoList[0].user_id}`).then(res1 => {
@@ -217,6 +253,10 @@ export default {
         element.currentTime = 0
       })
       qq[index].play()
+    },
+    // 搜索
+    search () {
+      this.$router.push('/serach')
     }
   },
   created () {
@@ -318,7 +358,10 @@ export default {
   margin-top: 50px;
 }
 .info .van-image {
-  animation: rotate 1s linear infinite;
+  animation: rotate 1.5s linear infinite;
+  border: 10px solid;
+  border-color: rgb(44, 38, 6);
+  box-sizing: border-box
 }
 @keyframes rotate {
   from {

@@ -12,11 +12,15 @@ const routes = [
   {
     path: '/sameCity',
     component: () => import('../views/SameCity.vue')
+  },
+  {
+    path: '/serach',
+    component: () => import('../views/Serach.vue')
   }
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: 'hash',
   base: process.env.BASE_URL,
   routes
 })

@@ -20,8 +20,8 @@
   height: 100%;
 }
 .navigate {
-  position: relative;
-  bottom: 60px;
+  position: fixed;
+  bottom: 10px;
   width: 100%;
   box-sizing: border-box;
   padding: 18px 30px;
@@ -31,7 +31,7 @@
 }
 
 .navigate span:nth-child(2) {
-  margin: 0 110px;
+  margin: 0 20%;
 }
 
 .navigate a {
