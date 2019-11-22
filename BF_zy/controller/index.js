@@ -29,9 +29,6 @@ module.exports.videos = (req, res) => {
   // 视频简介
   let vtext = req.query.vtext
 
-  // console.log(city);
-  // console.log(user_id);
-  // console.log(vtext)
   if (city) {
     mysql.query("SELECT * FROM video WHERE city = ?", city, (error, result) => {
       if (error) {
@@ -133,7 +130,7 @@ module.exports.user = (req, res) => {
 // 查询多个用户信息
 module.exports.users = (req, res) => {
   let id = req.query.id
-  
+
   mysql.query(`SELECT * FROM user WHERE id in (${id})`, (error, result) => {
     if (error) {
       return res.json({
@@ -142,10 +139,10 @@ module.exports.users = (req, res) => {
       })
     }
     res.json({
-      ok:1,
-      data:result[0]
+      ok: 1,
+      data: result[0]
     })
-})
+  })
 }
 
 // 根据视频id查询视频评论
@@ -204,20 +201,20 @@ module.exports.comadd = (req, res) => {
 }
 
 // 添加子评论
-module.exports.comaddson = (req, res) => {
-  let params = req.body
-  mysql.query("INSERT INTO com_son SET ?", params, (err, result) => {
-    if (err) {
-      return res.json({
-        ok: 0,
-        err: err
-      })
-    }
-    res.json({
-      ok: 1
-    })
-  })
-}
+// module.exports.comaddson = (req, res) => {
+//   let params = req.body
+//   mysql.query("INSERT INTO com_son SET ?", params, (err, result) => {
+//     if (err) {
+//       return res.json({
+//         ok: 0,
+//         err: err
+//       })
+//     }
+//     res.json({
+//       ok: 1
+//     })
+//   })
+// }
 
 // 视频点赞
 module.exports.praise = (req, res) => {
@@ -267,10 +264,8 @@ module.exports.praise = (req, res) => {
               })
             })
           })
-
         }
       })
-
     })
   } else if (zan == "false") {
     mysql.query("SELECT goods FROM video WHERE id = ?", id, (err, ret) => {
@@ -281,7 +276,6 @@ module.exports.praise = (req, res) => {
         })
       }
       // console.log(ret[0].goods)
-
       mysql.query(`UPDATE video SET goods = ? WHERE id = ${id}`, ret[0].goods - 1, (err1, ret1) => {
         if (err1) {
           return res.json({

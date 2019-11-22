@@ -69,7 +69,7 @@
               round
               width="2.5rem"
               height="2.5rem"
-              src="https://img.yzcdn.cn/vant/cat.jpeg"
+              :src="puser[index]"
             />
           </van-col>
           <van-col span="15" offset="3">
@@ -88,7 +88,7 @@
                   round
                   width="2rem"
                   height="2rem"
-                  src="https://img.yzcdn.cn/vant/cat.jpeg"
+                  :src="spuser[index1]"
                 />
               </van-col>
               <van-col span="15" offset="3" style="color:#5f5f60;text-align: left">
@@ -140,7 +140,9 @@ export default {
       // 当前用户ID
       userID: sessionStorage.getItem('userId') || 1,
       // 视频ID
-      videoID: 0
+      videoID: 0,
+      puser: [],
+      spuser: []
     }
   },
   methods: {
@@ -188,16 +190,20 @@ export default {
           this.conList = res.data.data
           this.conTotal = res.data.num
           this.fuser = []
+          this.puser = []
           this.suser = []
+          this.spuser = []
           this.conList.forEach(element => {
             this.$Http.get(`/user/${element.u_id}`).then(res => {
               this.fuser.push(res.data.data.username)
+              this.puser.push(res.data.data.photo)
             })
           })
           this.conList.forEach(element => {
             element.arr.forEach(element1 => {
               this.$Http.get(`/user/${element1.u_id}`).then(res => {
                 this.suser.push(res.data.data.username)
+                this.spuser.push(res.data.data.photo)
               })
             })
           })
