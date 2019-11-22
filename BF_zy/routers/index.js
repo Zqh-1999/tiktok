@@ -29,7 +29,7 @@ router.get("/comment/show/:id(\\d+)",controller.comment)
 // 添加父评论
 router.post("/comment/add",controller.comadd)
 // 添加子评论
-router.post("/comment/add/son",controller.comaddson)
+// router.post("/comment/add/son",controller.comaddson)
 
 // 视频点赞
 router.put("/praise",controller.praise)
