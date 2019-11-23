@@ -16,6 +16,14 @@ const routes = [
   {
     path: '/serach',
     component: () => import('../views/Serach.vue')
+  },
+  {
+    path: '/user/:id',
+    component: () => import('../views/User.vue')
+  },
+  {
+    path: '/subscribe',
+    component: () => import('../views/Subscribe.vue')
   }
 ]
 
@@ -24,5 +32,15 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+// router.beforeEach((to, from, next) => {
+//   if (to.path === '/login' || to.path === '/reg') return next()
+//   const token = window.sessionStorage.getItem('token')
+//   if (!token) {
+//     window.sessionStorage.removeItem('token')
+//     return next('/login')
+//   }
+//   next()
+// })
 
 export default router

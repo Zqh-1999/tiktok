@@ -1,5 +1,5 @@
 <template>
-  <div id="home">
+  <div id="subscribe">
     <!-- 推荐视频 -->
     <van-swipe style="height: 100%;" vertical :show-indicators="false" @change="onChange">
       <van-swipe-item v-for="(item, index) in videoList" :key="index">
@@ -53,10 +53,10 @@
           <i @click="search"></i>
         </van-col>
         <van-col offset="4" style="color:#fff">
-          <span ref="guanzhu" @click="guanzhu">关注</span>
+          <span class="active" ref="guanzhu" @click="guanzhu">关注</span>
         </van-col>
         <van-col offset="4" style="color:#fff">
-          <span class="active" ref="tuijian" @click="tuijian">推荐</span>
+          <span ref="tuijian" @click="tuijian">推荐</span>
         </van-col>
       </van-row>
     </div>
@@ -248,8 +248,8 @@ export default {
     },
     // 获取视频
     getVideoList () {
-      this.$Http.get('/index').then(res => {
-        if (res.data.code === 200) {
+      this.$Http.get(`/videod`, { params: { ids: '1,2,3' } }).then(res => {
+        if (res.data.ok === 1) {
           this.videoList = res.data.data
           this.$Http.get(`/user/${this.videoList[0].user_id}`).then(res1 => {
             this.userList = res1.data.data
@@ -288,7 +288,7 @@ export default {
 </script>
 
 <style scoped>
-#home {
+#subscribe {
   width: 100%;
   height: 100%;
 }
