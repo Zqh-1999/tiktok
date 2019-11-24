@@ -8,6 +8,7 @@ app.use(cors())
 
 // 挂载首页路由
 app.use(require('./routers/index'))
+app.use(require("./routers/route"))
 
 app.listen(8181)
 
