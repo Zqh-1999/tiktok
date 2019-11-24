@@ -24,6 +24,22 @@ const routes = [
   {
     path: '/subscribe',
     component: () => import('../views/Subscribe.vue')
+  },
+  {
+    path: '/reg',
+    component: () => import('../views/Reg.vue')
+  },
+  {
+    path: '/login',
+    component: () => import('../views/Login.vue')
+  },
+  {
+    path: '/user',
+    component: () => import('../views/User.vue')
+  },
+  {
+    path: '/userOne',
+    component: () => import('../views/UserOne.vue')
   }
 ]
 
@@ -33,14 +49,14 @@ const router = new VueRouter({
   routes
 })
 
-// router.beforeEach((to, from, next) => {
-//   if (to.path === '/login' || to.path === '/reg') return next()
-//   const token = window.sessionStorage.getItem('token')
-//   if (!token) {
-//     window.sessionStorage.removeItem('token')
-//     return next('/login')
-//   }
-//   next()
-// })
+router.beforeEach((to, from, next) => {
+  if (to.path === '/login' || to.path === '/reg') return next()
+  const token = window.sessionStorage.getItem('token')
+  if (!token) {
+    window.sessionStorage.removeItem('token')
+    return next('/reg')
+  }
+  next()
+})
 
 export default router
