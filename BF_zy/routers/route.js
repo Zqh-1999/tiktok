@@ -110,47 +110,6 @@ router.get('/loginY', (req, res) => {
 })
 
 
-
-
-
-// router.post('/uploader', (req, res) => {
-//     let file = req.body.file;
-//     let phone = req.body.phone
-//     let sql = `UPDATE user set photo=? where phone=${phone}`
-//     connection.query(sql, file, (error, results) => {
-//         if (error) return console.log(error)
-//         res.json({
-//             'code': 200,
-//             'msg': '成功'
-//         })
-//     })
-//     })
-
-    //     fs.writeFile('./public/upload/' + time, file, (error) => {
-    //     if (error) {
-    //         return console.log(error);
-    //     }
-    // })
-    // async function put () {
-    //     try {
-    //       let result = await clientOSS.put('/dou/' + time, './public/upload/' + time);
-    //       console.log(result);
-    //     } catch (e) {
-    //       console.log(e);
-    //     }
-    //   }
-
-    //   put();
-    // let result = clientOSS.put('/dou/' + time, './public/upload/' + time);
-    // return res.json({
-    //     data: { pic: result.url },
-    //     meta: {
-    //         status: "200",
-    //         msg: "上传成功！"
-    //     }
-    // })
-// })
-
 router.post('/baocun', (req, res) => {
     let username = req.body.username
     let intro = req.body.intro
