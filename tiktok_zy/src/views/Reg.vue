@@ -50,7 +50,7 @@ export default {
       this.$toast('delete')
     },
     async router () {
-      let { data: res } = await this.$axios.get('/login', {
+      let { data: res } = await this.$Http.get('/login', {
         params: this.phoneNums
       })
       if (res.code === 1) {

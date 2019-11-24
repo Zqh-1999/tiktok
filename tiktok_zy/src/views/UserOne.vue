@@ -13,7 +13,7 @@
         round
         width="5rem"
         height="5rem"
-        :src="fileList[0].file"
+        src="https://img.yzcdn.cn/vant/cat.jpeg"
         @click="photo"
       />
       <!-- </van-uploader> -->
@@ -21,12 +21,12 @@
     </div>
     <div class="field-box">
       <van-field
-        v-model="fileList[1].username"
+        v-model="fileList.username"
         label="昵称"
         placeholder="请填写昵称"
       />
       <van-field
-        v-model="fileList[1].intro"
+        v-model="fileList.intro"
         label="简介"
         placeholder="让大家认识你"
       />
@@ -47,12 +47,12 @@
         <div class="dropdown">
           <span>性别</span>
           <van-dropdown-menu>
-            <van-dropdown-item v-model="fileList[1].sex" :options="option" />
+            <van-dropdown-item v-model="idSex" :options="option" />
           </van-dropdown-menu>
         </div>
       </div>
       <van-field
-        v-model="fileList[1].dz"
+        v-model="fileList.city"
         label="地址"
         placeholder="请填写地址"
       />
@@ -65,22 +65,16 @@ import querystring from 'querystring'
 export default {
   data () {
     return {
-      fileList: [
-        { file: '', phone: '19805298262' },
-        {
-          username: '默认',
-          intro: '默认',
-          date: '',
-          sex: 0,
-          dz: '北京',
-          phone: '19805'
-        }
-      ],
+      id: sessionStorage.getItem('id'),
+      fileList: {
+        username: '', intro: '', birth: '', sex: '', city: ''
+      },
       date: new Date(),
       height: 44,
       num: 1,
-      // minDate: "30",
-      value1: 2,
+      // // minDate: "30",
+      // value1: 2,
+      idSex: '',
       option: [
         { text: '男', value: 0 },
         { text: '女', value: 1 },
@@ -96,11 +90,11 @@ export default {
       let year = date.getFullYear()
       let month = date.getMonth() + 1
       let dates = date.getDate()
-      this.fileList[1].date = year + '-' + month + '-' + dates
+      this.fileList.date = year + '-' + month + '-' + dates
     },
     // async afterRead(file) {
     //   this.fileList[0].file = file.content;
-    //   let { data: res } = await this.$axios.post(
+    //   let { data: res } = await this.$Http.post(
     //     "/uploader",
     //     querystring.stringify(this.fileList[0])
     //   );
@@ -118,17 +112,23 @@ export default {
     },
 
     async onClickRight () {
-      let { data: res } = await this.$axios.post(
+      let { data: res } = await this.$Http.post(
         '/baocun',
-        querystring.stringify(this.fileList[1])
+        querystring.stringify(this.fileList)
       )
-      window.console.log(res)
+      if (res.code === 200) {
+        alert('修改成功')
+        this.$router.push('/user')
+      }
     }
+  },
+  created () {
+    this.$Http.get(`/user/${this.id}`).then(res => {
+      this.fileList = res.data.data
+      this.idSex = this.fileList.sex - 0
+      console.log(this.fileList, this.fileList.sex)
+    })
   }
-
-  // created: function() {
-  //   window.console.log(this.fileList.date);
-  // }
 }
 </script>
 

@@ -94,7 +94,7 @@ module.exports.video = (req, res) => {
 
 // 根据id查询多个用户
 module.exports.videod = (req, res) => {
-  let ids = req.query.ids;
+  let ids = req.query.ids
   mysql.query(`SELECT * FROM video WHERE id in (${ids})`, (error, result) => {
     if (error) {
       return res.json({
@@ -221,7 +221,6 @@ module.exports.praise = (req, res) => {
   let zan = req.body.zan
   let user_id = req.body.user_id
   let id = req.body.id
-  console.log(user_id)
   if (zan == "true") {
     mysql.query("SELECT goods FROM video WHERE id = ?", id, (err, ret) => {
       if (err) {
@@ -230,7 +229,6 @@ module.exports.praise = (req, res) => {
           err: err
         })
       }
-      // console.log(ret[0].goods)
       mysql.query(`UPDATE video SET goods = ? WHERE id = ${id}`, ret[0].goods + 1, (err1, ret1) => {
         if (err1) {
           return res.json({
@@ -245,24 +243,41 @@ module.exports.praise = (req, res) => {
                 err: err2
               })
             }
-            // console.log(ret2)
-            let arr = ret2[0].love.split(",")
-            arr.push(id)
-
-            function unique(arr) {
-              return Array.from(new Set(arr))
-            }
-            const str = unique(arr).join(",")
-            // console.log(str)
-            mysql.query(`update user set love = ? where id = ${user_id}`, str, (error, result) => {
-              if (error) return console.log(error)
-              res.json({
-                ok: 1,
-                data: {
-                  goods: ret[0].goods + 1
-                }
+            if (ret2[0].love === undefined) {
+              let arr = []
+              arr.push(id)
+  
+              function unique(arr) {
+                return Array.from(new Set(arr))
+              }
+              const str = unique(arr).join(",")
+              mysql.query(`update user set love = ? where id = ${user_id}`, str, (error, result) => {
+                if (error) return console.log(error)
+                res.json({
+                  ok: 1,
+                  data: {
+                    goods: ret[0].goods + 1
+                  }
+                })
               })
-            })
+            } else {
+              let arr = ret2[0].love.split(",")
+              arr.push(id)
+  
+              function unique(arr) {
+                return Array.from(new Set(arr))
+              }
+              const str = unique(arr).join(",")
+              mysql.query(`update user set love = ? where id = ${user_id}`, str, (error, result) => {
+                if (error) return console.log(error)
+                res.json({
+                  ok: 1,
+                  data: {
+                    goods: ret[0].goods + 1
+                  }
+                })
+              })
+            }
           })
         }
       })

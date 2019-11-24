@@ -9,7 +9,7 @@
         <router-link to="/">首页</router-link>
       </span>
       <span>
-        <router-link to="/my">我</router-link>
+        <router-link to="/user">我</router-link>
       </span>
     </div>
   </div>

@@ -48,7 +48,7 @@ export default {
       this.$toast('delete')
     },
     async login () {
-      let { data: res } = await this.$axios.get('/loginY', {
+      let { data: res } = await this.$Http.get('/loginY', {
         params: this.yzms
       })
       if (res.code === 200) {

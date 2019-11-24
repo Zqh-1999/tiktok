@@ -40,6 +40,10 @@ const routes = [
   {
     path: '/userOne',
     component: () => import('../views/UserOne.vue')
+  },
+  {
+    path: `/user/:id`,
+    component: () => import('../views/Users.vue')
   }
 ]
 
@@ -51,9 +55,9 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.path === '/login' || to.path === '/reg') return next()
-  const token = window.sessionStorage.getItem('token')
+  const token = window.sessionStorage.getItem('id')
   if (!token) {
-    window.sessionStorage.removeItem('token')
+    window.sessionStorage.removeItem('id')
     return next('/reg')
   }
   next()

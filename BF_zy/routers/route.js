@@ -78,26 +78,33 @@ router.get('/login', (req, res) => {
 })
 
 router.get('/loginY', (req, res) => {
-    console.log(req.query)
     let phoneNum = req.query.phoneNum;
     let verify = req.query.verify;
     let yzm = req.query.yzm;
     if (verify == yzm) {
-        let sql = 'select phone from user where phone=?'
-        connection.query(sql, phoneNum, (error, results) => {
+        let sqla = 'select phone from user where phone=?'
+        connection.query(sqla, phoneNum, (error, results) => {
             // console.log(results)
             if (results.length == 0) {
-                let sql = "INSERT INTO `user` (phone) VALUES (?);"
-                connection.query(sql, phoneNum, (error, results) => {
-                    return res.json({
-                        'code': 200,
-                        'msg': '注册成功'
+                let sqlb = "INSERT INTO `user` (phone) VALUES (?);"
+                connection.query(sqlb, phoneNum, (error, results) => {
+                    let sqlc = 'select id from user where phone=?'
+                    connection.query(sqlc, phoneNum, (error, result) => {
+                        return res.json({
+                            'id':result[0].id,
+                            'code': 200,
+                            'msg': '注册成功'
+                        })
                     })
                 })
             } else {
-                return res.json({
-                    'code': 202,
-                    'msg': '欢迎-' + phoneNum
+                let sqlc = 'select id from user where phone=?'
+                connection.query(sqlc, phoneNum, (error, result) => {
+                    return res.json({
+                        'id':result[0].id,
+                        'code': 202,
+                        'msg': '欢迎-' + phoneNum
+                    })
                 })
             }
         })
@@ -110,14 +117,56 @@ router.get('/loginY', (req, res) => {
 })
 
 
+
+
+
+// router.post('/uploader', (req, res) => {
+//     let file = req.body.file;
+//     let phone = req.body.phone
+//     let sql = `UPDATE user set photo=? where phone=${phone}`
+//     connection.query(sql, file, (error, results) => {
+//         if (error) return console.log(error)
+//         res.json({
+//             'code': 200,
+//             'msg': '成功'
+//         })
+//     })
+//     })
+
+    //     fs.writeFile('./public/upload/' + time, file, (error) => {
+    //     if (error) {
+    //         return console.log(error);
+    //     }
+    // })
+    // async function put () {
+    //     try {
+    //       let result = await clientOSS.put('/dou/' + time, './public/upload/' + time);
+    //       console.log(result);
+    //     } catch (e) {
+    //       console.log(e);
+    //     }
+    //   }
+
+    //   put();
+    // let result = clientOSS.put('/dou/' + time, './public/upload/' + time);
+    // return res.json({
+    //     data: { pic: result.url },
+    //     meta: {
+    //         status: "200",
+    //         msg: "上传成功！"
+    //     }
+    // })
+// })
+
 router.post('/baocun', (req, res) => {
+    console.log(req.body.city)
     let username = req.body.username
     let intro = req.body.intro
-    let date = req.body.date
+    let birth = req.body.birth
     let sex = req.body.sex
-    let dz = req.body.dz
+    let city = req.body.city
     let phone = req.body.phone
-    let arr = [username, intro, date, sex, dz]
+    let arr = [username, intro, birth, sex, city]
     let sql = `UPDATE user set username=?,intro=?,birth=?,sex=?,city=? where phone=${phone}`
     connection.query(sql, arr, (error, results) => {
         if (error) return console.log(error)

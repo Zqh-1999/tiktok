@@ -19,8 +19,8 @@
               <van-image round width="70" height="70" :src="userList.photo" @click="user(userList.id)" />
             </li>
             <li>
-              <i @click="heart(index,item)" ref="ii"></i>
-              <span>{{item.goods}}</span>
+              <i @click="heart(index,item)" ref="ii" :class="love.indexOf(item.id+'') == -1 ? '':'like-active'"></i>
+              <span>{{item.goods+' '+item.id}}</span>
             </li>
             <li>
               <i @click="con(item.id)"></i>
@@ -138,14 +138,22 @@ export default {
       // 评论输入内容
       value: '',
       // 当前用户ID
-      userID: sessionStorage.getItem('userId') || 1,
+      userID: sessionStorage.getItem('id'),
       // 视频ID
       videoID: 0,
       puser: [],
-      spuser: []
+      spuser: [],
+      //
+      love: []
     }
   },
   methods: {
+    // 获取当前用户关注的视频
+    getLove () {
+      this.$Http.get(`/user/${this.userID}`).then(res => {
+        this.love = res.data.data.love.split(',')
+      })
+    },
     // 推荐
     tuijian () {
       this.status = '推荐'
@@ -278,11 +286,13 @@ export default {
     // 跳转到用户信息
     user (id) {
       this.$router.push(`/user/${id}`)
-      sessionStorage.setItem('id', id)
+      sessionStorage.setItem('userID', id)
+      console.log(id)
     }
   },
   created () {
     this.getVideoList()
+    this.getLove()
   }
 }
 </script>

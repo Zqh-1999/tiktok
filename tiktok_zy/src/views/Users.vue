@@ -11,12 +11,11 @@
         src="https://img.yzcdn.cn/vant/cat.jpeg"
       />
       <div class="top">
-        <router-link to="/userOne" class="bj">编辑资料</router-link>
-        <button><span>+</span>好友</button>
+        <router-link to="/userOne" class="bj">关注</router-link>
       </div>
       <div class="user-box">
         <span class="userName" v-html="userList.username"></span>
-        <span class="userId">DOU号：{{ userList.id }}</span>
+        <span class="userId">DOU号：{{ qq }}</span>
       </div>
       <div class="floot-box">
         <span class="jl" v-if="userList.intro == null"
@@ -40,16 +39,16 @@
       <div class="zuo">
         <span @click="zuo">作品</span>
         <div class="ship">
-          <div v-for="src in imgArr" :key="src">
+          <!-- <div v-for="(src,index) in imgArr" :key="index">
             <img :src="src.imgSrc" alt="" />
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="likes">
         <span @click="likes">喜欢</span>
         <div class="ship">
-          <div v-for="src in imgArr" :key="src">
-            <img :src="src.imgSrc" alt="" />
+          <div v-for="(item,index) in imgArr" :key="index">
+            <img :src="item.vurl" alt="" />
           </div>
         </div>
       </div>
@@ -67,9 +66,10 @@ export default {
         intro: '',
         love: ''
       },
-      id: 3,
-      user_id: 3,
-      imgArr: [{ imgSrc: '' }]
+      qq: sessionStorage.getItem('phoneNum'),
+      id: sessionStorage.getItem('userID'),
+      user_id: sessionStorage.getItem('id'),
+      imgArr: []
     }
   },
   methods: {
@@ -87,13 +87,16 @@ export default {
     }
   },
   created: function () {
-    this.$axios.get(`/user/${this.id}`).then(res => {
+    this.$Http.get(`/user/${this.id}`).then(res => {
       this.userList = res.data.data
+      console.log(res)
     })
-    this.$axios
-      .get(`/videos`, { params: { user_id: this.user_id } })
+    this.$Http
+      .get(`/user/${sessionStorage.getItem('id')}`)
       .then(res => {
-        this.imgArr[0].imgSrc = res.data.data.vurl
+        this.$Http.get('/videod', { params: { ids: res.data.data.love } }).then(res => {
+          this.imgArr = res.data.data
+        })
       })
   }
 }
